@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặc tả Yêu cầu Phần mềm (SRS) - TechNova Smart E-Shop</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid.js for rendering diagrams -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true }
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #0f172a;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --warning: #ea580c;
+            --warning-light: #fff7ed;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: #ffffff;
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            color: var(--text-dark);
+        }
+
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: 1em;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.3em;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-left: 4px solid;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .alert-note {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .alert-tip {
+            background-color: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-warning {
+            background-color: var(--warning-light);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-important {
+            background-color: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Diagrams container */
+        .diagram-container {
+            border: 1px solid var(--border);
+            background-color: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid {
+            width: 100%;
+        }
+
+        /* Title card */
+        .title-card {
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%);
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .title-card table {
+            margin: 15px 0 0 0;
+            background-color: white;
+        }
+
+        .title-card th, .title-card td {
+            border: 1px solid var(--border);
+        }
+
+        /* Print formatting */
+        @media print {
+            body {
+                padding: 0;
+                font-size: 12pt;
+            }
+            .title-card {
+                box-shadow: none;
+                background: none;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+            }
+            .diagram-container {
+                page-break-inside: avoid;
+            }
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-card">
+        <h1>Tài liệu Đặc tả Yêu cầu Phần mềm (SRS)</h1>
+        <h2>Hệ thống Smart E-Shop – TechNova</h2>
+        
+        <table>
+            <tr>
+                <th>Thông tin</th>
+                <td>Chi tiết</td>
+            </tr>
+            <tr>
+                <th>Tên dự án</th>
+                <td>TechNova Smart E-Shop (Shop AI)</td>
+            </tr>
+            <tr>
+                <th>Khách hàng</th>
+                <td>Công ty Bán lẻ Thiết bị Điện tử TechNova</td>
+            </tr>
+            <tr>
+                <th>Phiên bản</th>
+                <td>1.0.0</td>
+            </tr>
+            <tr>
+                <th>Ngày tạo</th>
+                <td>03/07/2026</td>
+            </tr>
+            <tr>
+                <th>Trạng thái</th>
+                <td>Hoàn thành – Sẵn sàng phê duyệt</td>
+            </tr>
+            <tr>
+                <th>Chuẩn tham chiếu</th>
+                <td>IEEE 830-1998</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>1. Giới thiệu</h2>
+    
+    <h3>1.1 Mục đích (Purpose)</h3>
+    <p>Tài liệu này mô tả đầy đủ các yêu cầu chức năng và phi chức năng của hệ thống <strong>TechNova Smart E-Shop</strong> – một nền tảng thương mại điện tử được xây dựng nhằm số hóa toàn bộ quy trình bán hàng, quản lý sản phẩm và vận hành nội bộ của Công ty TechNova.</p>
+    <p>Tài liệu này được dùng làm căn cứ để:</p>
+    <ul>
+        <li>Đội phát triển (Development Team) hiểu và triển khai hệ thống đúng yêu cầu.</li>
+        <li>Khách hàng (TechNova Director) xem xét và phê duyệt phạm vi dự án.</li>
+        <li>Bộ phận kiểm thử (QA) thiết kế Test Cases.</li>
+    </ul>
+
+    <h3>1.2 Phạm vi (Scope)</h3>
+    <p>Hệ thống <strong>TechNova Smart E-Shop</strong> sẽ cung cấp:</p>
+    <ul>
+        <li><strong>Cổng mua sắm trực tuyến (E-Commerce Portal):</strong> Cho phép khách hàng duyệt, tìm kiếm, thêm vào giỏ hàng và đặt mua các sản phẩm điện tử (điện thoại, laptop).</li>
+        <li><strong>Bảng quản trị nội bộ (Admin Panel):</strong> Cho phép nhân viên kho quản lý danh mục sản phẩm; cho phép quản lý xem thống kê và phân quyền nhân viên.</li>
+        <li><strong>Hệ thống Backend API (REST):</strong> Cung cấp giao diện lập trình ứng dụng cho cả frontend và các tích hợp tương lai.</li>
+        <li><strong>Cơ sở hạ tầng bảo mật:</strong> Xác thực JWT, phân quyền RBAC, bảo vệ dữ liệu khách hàng.</li>
+    </ul>
+    <p><strong>Nằm ngoài phạm vi phiên bản 1.0:</strong></p>
+    <ul>
+        <li>Tích hợp cổng thanh toán trực tuyến (VNPay, MoMo) – sẽ xem xét ở phiên bản 2.0.</li>
+        <li>Ứng dụng di động (Mobile App).</li>
+        <li>Hệ thống gợi ý sản phẩm bằng AI/ML.</li>
+    </ul>
+
+    <h3>1.3 Định nghĩa, Từ viết tắt (Definitions)</h3>
+    <table>
+        <tr>
+            <th>Thuật ngữ</th>
+            <th>Định nghĩa</th>
+        </tr>
+        <tr>
+            <td><strong>SRS</strong></td>
+            <td>Software Requirements Specification – Tài liệu đặc tả yêu cầu phần mềm</td>
+        </tr>
+        <tr>
+            <td><strong>FR</strong></td>
+            <td>Functional Requirement – Yêu cầu chức năng</td>
+        </tr>
+        <tr>
+            <td><strong>NFR</strong></td>
+            <td>Non-Functional Requirement – Yêu cầu phi chức năng</td>
+        </tr>
+        <tr>
+            <td><strong>API</strong></td>
+            <td>Application Programming Interface</td>
+        </tr>
+        <tr>
+            <td><strong>JWT</strong></td>
+            <td>JSON Web Token – Chuẩn xác thực stateless</td>
+        </tr>
+        <tr>
+            <td><strong>RBAC</strong></td>
+            <td>Role-Based Access Control – Phân quyền theo vai trò</td>
+        </tr>
+        <tr>
+            <td><strong>JPA</strong></td>
+            <td>Java Persistence API</td>
+        </tr>
+        <tr>
+            <td><strong>ERD</strong></td>
+            <td>Entity Relationship Diagram – Sơ đồ thực thể quan hệ</td>
+        </tr>
+        <tr>
+            <td><strong>N+1</strong></td>
+            <td>Bài toán hiệu năng trong ORM: 1 query gốc sinh ra N query con</td>
+        </tr>
+    </table>
+
+    <h3>1.4 Tài liệu tham chiếu (References)</h3>
+    <ul>
+        <li>IEEE 830-1998: <em>IEEE Recommended Practice for Software Requirements Specifications</em></li>
+        <li>Spring Boot 3.x Documentation: https://docs.spring.io/spring-boot/</li>
+        <li>Spring Security 6 Reference: https://docs.spring.io/spring-security/</li>
+        <li>MySQL 8.0 Reference Manual</li>
+    </ul>
+
+    <h2>2. Mô tả tổng quan hệ thống</h2>
+
+    <h3>2.1 Góc nhìn sản phẩm (Product Perspective)</h3>
+    <p>Hệ thống Smart E-Shop là một <strong>ứng dụng web độc lập</strong> (standalone), hoạt động theo mô hình Client-Server. Backend được xây dựng bằng <strong>Spring Boot</strong> cung cấp RESTful API; Frontend (sẽ phát triển trong giai đoạn sau) sẽ kết nối qua API này.</p>
+    
+    <div class="alert alert-note">
+        <strong>Kiến trúc triển khai:</strong><br>
+        [Trình duyệt / Mobile] &larr;&rarr; [Spring Boot API Server (JWT Filter + RBAC)] &larr;&rarr; [MySQL Database]
+    </div>
+
+    <h3>2.2 Các chức năng chính (Product Functions)</h3>
+    <table>
+        <tr>
+            <th>STT</th>
+            <th>Nhóm chức năng</th>
+            <th>Mô tả ngắn gọn</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Quản lý tài khoản</td>
+            <td>Đăng ký, đăng nhập, xem thông tin tài khoản cá nhân.</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Danh mục sản phẩm</td>
+            <td>Duyệt danh sách sản phẩm, xem chi tiết và tìm kiếm sản phẩm.</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Giỏ hàng</td>
+            <td>Thêm, cập nhật số lượng, xóa sản phẩm khỏi giỏ hàng.</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Đặt hàng</td>
+            <td>Checkout giỏ hàng thành đơn hàng, xem lịch sử đơn hàng.</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Quản trị sản phẩm</td>
+            <td>Thêm, sửa, xóa sản phẩm (dành cho Staff & Manager).</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Thống kê báo cáo</td>
+            <td>Xem tổng doanh thu và top 5 sản phẩm bán chạy (dành cho Manager).</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>Phân quyền nhân viên</td>
+            <td>Gán hoặc thu hồi vai trò cho tài khoản nhân viên (dành cho Manager).</td>
+        </tr>
+    </table>
+
+    <h3>2.3 Người dùng và Đặc điểm (User Classes)</h3>
+    <h4>2.3.1 Guest (Khách vãng lai)</h4>
+    <ul>
+        <li>Duyệt danh sách sản phẩm, xem chi tiết và tìm kiếm sản phẩm.</li>
+        <li>Để mua hàng, bắt buộc phải đăng ký tài khoản và đăng nhập vào hệ thống.</li>
+    </ul>
+    <h4>2.3.2 Customer (Khách hàng đã đăng ký)</h4>
+    <ul>
+        <li>Có đầy đủ quyền mua sắm: quản lý giỏ hàng cá nhân, tiến hành đặt hàng, xem lịch sử đơn hàng của mình.</li>
+        <li><strong>Tuyệt đối không có quyền truy cập vào các API quản trị (Admin).</strong></li>
+    </ul>
+    <h4>2.3.3 Staff – Nhân viên kho (ROLE_STAFF)</h4>
+    <ul>
+        <li>Có quyền truy cập quản trị sản phẩm: Thêm, sửa thông tin, xóa mềm sản phẩm.</li>
+        <li><strong>Không</strong> được phép xem doanh thu, thống kê, hoặc quản lý người dùng khác.</li>
+    </ul>
+    <h4>2.3.4 Manager – Quản lý (ROLE_MANAGER)</h4>
+    <ul>
+        <li>Có toàn quyền trong hệ thống.</li>
+        <li>Được phép xem thống kê doanh thu, quản lý danh sách nhân viên, gán vai trò (roles).</li>
+        <li>Có thể thực hiện CRUD sản phẩm tương tự nhân viên kho.</li>
+    </ul>
+
+    <h3>2.4 Môi trường vận hành (Operating Environment)</h3>
+    <ul>
+        <li><strong>Backend Runtime:</strong> Java 17+, Spring Boot 3.x</li>
+        <li><strong>Database:</strong> MySQL 8.0+</li>
+        <li><strong>Concurrent Users:</strong> Hệ thống thiết kế chịu tải cho hơn 10,000 người dùng truy cập cùng lúc.</li>
+    </ul>
+
+    <h3>2.5 Ràng buộc thiết kế (Design Constraints)</h3>
+    <ul>
+        <li><strong>Stateless Architecture:</strong> Không lưu session phía server, toàn bộ thông tin xác thực nằm trong JWT.</li>
+        <li><strong>Database:</strong> Chỉ sử dụng MySQL để lưu trữ dữ liệu.</li>
+        <li><strong>Security:</strong> Mật khẩu khách hàng bắt buộc phải băm bằng thuật toán BCrypt.</li>
+        <li><strong>N+1 Prevention:</strong> Tất cả liên kết JPA thực hiện Lazy Loading kết hợp sử dụng EntityGraph khi cần truy vấn để tối ưu hóa hiệu năng.</li>
+    </ul>
+
+    <h2>3. Yêu cầu cụ thể</h2>
+
+    <h3>3.1 Yêu cầu giao diện ngoài (External Interface Requirements)</h3>
+    <p>Frontend giao tiếp với backend thông qua giao thức HTTPS. Mọi dữ liệu trao đổi được định dạng bằng JSON. Các API được bảo mật bằng mã JWT Bearer gửi trong HTTP Header: <code>Authorization: Bearer &lt;JWT_TOKEN&gt;</code>.</p>
+
+    <h3>3.2 Yêu cầu chức năng (Functional Requirements)</h3>
+    
+    <h4>FR-001: Đăng ký tài khoản</h4>
+    <ul>
+        <li><strong>Actor:</strong> Guest</li>
+        <li><strong>Endpoint:</strong> <code>POST /api/v1/auth/register</code></li>
+        <li><strong>Mô tả:</strong> Cho phép khách tạo tài khoản mới với role mặc định là <code>CUSTOMER</code>.</li>
+        <li><strong>Input:</strong> username, email, password, fullName, phone, address.</li>
+        <li><strong>Validation:</strong> Username từ 3-50 ký tự; Email hợp lệ; Mật khẩu dài ít nhất 8 ký tự.</li>
+    </ul>
+
+    <h4>FR-002: Đăng nhập</h4>
+    <ul>
+        <li><strong>Actor:</strong> Guest, Customer, Staff, Manager</li>
+        <li><strong>Endpoint:</strong> <code>POST /api/v1/auth/login</code></li>
+        <li><strong>Mô tả:</strong> Nhập username + password để nhận mã JWT Token truy cập hệ thống.</li>
+    </ul>
+
+    <h4>FR-003: Xem danh sách sản phẩm</h4>
+    <ul>
+        <li><strong>Actor:</strong> Public (Guest & Customer)</li>
+        <li><strong>Endpoint:</strong> <code>GET /api/v1/public/products</code></li>
+        <li><strong>Mô tả:</strong> Xem danh sách sản phẩm đang active hỗ trợ phân trang và sắp xếp.</li>
+    </ul>
+
+    <h4>FR-006: Quản lý giỏ hàng</h4>
+    <ul>
+        <li><strong>Actor:</strong> Customer</li>
+        <li><strong>Endpoints:</strong> 
+            <ul>
+                <li><code>GET /api/v1/customer/cart</code> (Xem giỏ hàng)</li>
+                <li><code>POST /api/v1/customer/cart/items</code> (Thêm sản phẩm)</li>
+                <li><code>DELETE /api/v1/customer/cart/items/{id}</code> (Xóa sản phẩm)</li>
+            </ul>
+        </li>
+        <li><strong>Validation:</strong> Số lượng thêm vào phải lớn hơn 0 và không vượt quá tồn kho hiện tại.</li>
+    </ul>
+
+    <h4>FR-007: Đặt hàng (Checkout)</h4>
+    <ul>
+        <li><strong>Actor:</strong> Customer</li>
+        <li><strong>Endpoint:</strong> <code>POST /api/v1/customer/orders</code></li>
+        <li><strong>Mô tả:</strong> Tạo đơn hàng từ giỏ hàng hiện tại, tự động trừ tồn kho và làm sạch giỏ hàng.</li>
+    </ul>
+
+    <h4>FR-009: CRUD Sản phẩm</h4>
+    <ul>
+        <li><strong>Actor:</strong> Staff, Manager</li>
+        <li><strong>Endpoints:</strong> <code>POST/PUT/DELETE /api/v1/admin/products/**</code></li>
+        <li><strong>Mô tả:</strong> Quản lý danh mục sản phẩm. Thao tác DELETE sẽ chuyển trạng thái active = false (Xóa mềm).</li>
+    </ul>
+
+    <h4>FR-010: Xem thống kê doanh thu</h4>
+    <ul>
+        <li><strong>Actor:</strong> Manager</li>
+        <li><strong>Endpoint:</strong> <code>GET /api/v1/admin/stats/revenue?startDate={date}&endDate={date}</code></li>
+        <li><strong>Mô tả:</strong> Báo cáo doanh thu, số lượng đơn theo trạng thái và top 5 sản phẩm bán chạy.</li>
+    </ul>
+
+    <h4>FR-011: Phân quyền nhân viên</h4>
+    <ul>
+        <li><strong>Actor:</strong> Manager</li>
+        <li><strong>Endpoint:</strong> <code>PUT /api/v1/admin/users/{id}/roles</code></li>
+        <li><strong>Mô tả:</strong> Gán quyền hoặc thu hồi vai trò cho tài khoản. Không được tự thay đổi quyền hạn của chính mình.</li>
+    </ul>
+
+    <h3>3.3 Yêu cầu phi chức năng (Non-Functional Requirements)</h3>
+    <ul>
+        <li><strong>NFR-001 (Hiệu năng):</strong> Phản hồi API &lt; 500ms đối với 10,000 người dùng đồng thời. Truy vấn JPA sử dụng cơ chế nạp Lazy và EntityGraph để tránh lỗi N+1 Query.</li>
+        <li><strong>NFR-002 (Bảo mật):</strong> Mật khẩu băm bằng BCrypt (strength=12). Hạn sống JWT Token là 24 giờ. Trả về thông báo lỗi 401 Unauthorized và 403 Forbidden theo cấu trúc JSON.</li>
+        <li><strong>NFR-003 (Phân quyền):</strong> Kiểm soát quyền truy cập chi tiết dựa trên Role (RBAC) thông qua Spring Security 6 Filter Chain.</li>
+    </ul>
+
+    <h2>4. Sơ đồ Use Case</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+flowchart TD
+    Guest([👤 Guest])
+    Customer([🛍️ Customer])
+    Staff([👷 Staff])
+    Manager([👔 Manager])
+
+    subgraph Public["🌐 Vùng Công Khai"]
+        UC1[FR-001: Đăng ký]
+        UC2[FR-002: Đăng nhập]
+        UC3[FR-003: Xem sản phẩm]
+        UC4[FR-004: Tìm kiếm]
+    end
+
+    subgraph CustomerZone["🛒 Vùng Khách Hàng"]
+        UC6[FR-006: Giỏ hàng]
+        UC7[FR-007: Đặt hàng]
+        UC8[FR-008: Lịch sử đơn]
+    end
+
+    subgraph AdminZone["🔐 Vùng Quản Trị"]
+        UC9[FR-009: CRUD Sản phẩm]
+        UC10[FR-010: Thống kê doanh thu]
+        UC11[FR-011: Phân quyền]
+    end
+
+    Guest --> UC1
+    Guest --> UC2
+    Guest --> UC3
+    Guest --> UC4
+
+    Customer --> UC3
+    Customer --> UC4
+    Customer --> UC6
+    Customer --> UC7
+    Customer --> UC8
+
+    Staff --> UC9
+    
+    Manager --> UC9
+    Manager --> UC10
+    Manager --> UC11
+        </pre>
+    </div>
+
+    <h2>5. Sơ đồ ERD – Cơ sở dữ liệu</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+erDiagram
+    USERS {
+        bigint id PK
+        varchar username UK
+        varchar email UK
+        varchar password
+        varchar full_name
+        varchar phone
+        text address
+        boolean enabled
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ROLES {
+        int id PK
+        varchar name UK
+        varchar description
+    }
+
+    USER_ROLES {
+        bigint user_id FK
+        int role_id FK
+    }
+
+    PRODUCTS {
+        bigint id PK
+        varchar name
+        text description
+        decimal price
+        int stock_quantity
+        varchar category
+        varchar image_url
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CARTS {
+        bigint id PK
+        bigint user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CART_ITEMS {
+        bigint id PK
+        bigint cart_id FK
+        bigint product_id FK
+        int quantity
+        timestamp added_at
+    }
+
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar status
+        decimal total_amount
+        text shipping_address
+        varchar payment_method
+        timestamp ordered_at
+        timestamp updated_at
+    }
+
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint product_id FK
+        int quantity
+        decimal unit_price
+    }
+
+    USERS ||--o{ USER_ROLES : "có nhiều role"
+    ROLES ||--o{ USER_ROLES : "được gán cho nhiều user"
+    USERS ||--|| CARTS : "sở hữu"
+    CARTS ||--o{ CART_ITEMS : "chứa"
+    PRODUCTS ||--o{ CART_ITEMS : "được thêm vào"
+    USERS ||--o{ ORDERS : "đặt hàng"
+    ORDERS ||--o{ ORDER_ITEMS : "gồm nhiều"
+    PRODUCTS ||--o{ ORDER_ITEMS : "nằm trong"
+        </pre>
+    </div>
+
+</body>
+</html>
