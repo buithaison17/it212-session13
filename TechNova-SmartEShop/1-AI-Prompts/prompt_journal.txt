@@ -1,0 +1,554 @@
+# 📋 NHẬT KÝ PROMPT ENGINEERING – TECHNOVA SMART E-SHOP
+**Sinh viên:** [Họ và tên]  
+**MSSV:** [Mã số sinh viên]  
+**Ngày thực hiện:** 03/07/2026  
+**Công cụ AI sử dụng:** Antigravity (Google DeepMind) / ChatGPT / Claude  
+
+---
+
+## PHẦN 1 – PHÂN TÍCH NGHIỆP VỤ (Business Analysis)
+
+---
+
+### PROMPT #1 – Role-Prompting + Requirements Elicitation
+
+**Mục đích:** Bóc tách yêu cầu thô từ khách hàng thành các thành phần BA chuẩn.
+
+**Câu Prompt đã dùng:**
+
+```
+Bạn là một Senior Business Analyst (BA) với 10 năm kinh nghiệm trong lĩnh vực 
+phân tích hệ thống phần mềm thương mại điện tử. Nhiệm vụ của bạn là tiếp nhận 
+đoạn ghi chép yêu cầu thô từ buổi họp với Giám đốc công ty TechNova và chuẩn hóa 
+chúng thành tài liệu phân tích chuyên nghiệp.
+
+Dưới đây là bản ghi chép yêu cầu thô:
+---
+"Tôi muốn một cái hệ thống web để bán hàng. Khách hàng có thể lên đó xem điện 
+thoại, laptop, bỏ vào giỏ hàng rồi thanh toán. Cơ mà trước khi mua họ phải đăng 
+ký tài khoản và đăng nhập nhé. Hệ thống phải bảo mật, không được để lộ thông tin 
+khách.
+
+Về phần nhân viên của tôi, họ cần một trang quản trị (Admin). Trong đó, nhân viên 
+kho thì chỉ được thêm, sửa, xóa sản phẩm. Còn quản lý (Manager) thì được xem 
+thống kê doanh thu và cấp quyền cho nhân viên khác. Khách hàng tuyệt đối không 
+được mò vào trang của Admin. Hệ thống sau này dự kiến có hàng chục ngàn người 
+truy cập cùng lúc nên API phải chạy nhanh, cơ sở dữ liệu không được sập."
+---
+
+Hãy thực hiện các nhiệm vụ sau:
+1. Xác định tất cả các Actors (tác nhân) tham gia hệ thống.
+2. Liệt kê đầy đủ các Yêu cầu Chức năng (Functional Requirements - FR), đánh số FR-001, FR-002,...
+3. Liệt kê đầy đủ các Yêu cầu Phi chức năng (Non-Functional Requirements - NFR), đánh số NFR-001,...
+4. Chỉ ra các yêu cầu còn mơ hồ (ambiguous) cần làm rõ thêm với khách hàng.
+
+Trình bày theo format markdown có cấu trúc rõ ràng.
+```
+
+**Kết quả AI trả về (tóm tắt):**
+
+**Actors xác định:**
+- **Guest (Khách vãng lai):** Truy cập công khai, xem sản phẩm
+- **Customer (Khách hàng đã đăng ký):** Đăng ký/đăng nhập, giỏ hàng, đặt hàng, xem lịch sử
+- **Staff (Nhân viên kho):** CRUD sản phẩm trong Admin panel
+- **Manager (Quản lý):** Xem thống kê, phân quyền nhân viên, xem đơn hàng
+- **System (Hệ thống):** Gửi email xác nhận, xử lý thanh toán (tự động)
+
+**Functional Requirements:**
+
+| Mã | Tên chức năng | Actor |
+|----|---------------|-------|
+| FR-001 | Đăng ký tài khoản | Guest |
+| FR-002 | Đăng nhập (nhận JWT) | Guest |
+| FR-003 | Xem danh sách sản phẩm (phân trang, lọc) | Guest, Customer |
+| FR-004 | Xem chi tiết sản phẩm | Guest, Customer |
+| FR-005 | Tìm kiếm sản phẩm theo tên/category | Guest, Customer |
+| FR-006 | Thêm sản phẩm vào giỏ hàng | Customer |
+| FR-007 | Xem / cập nhật / xóa giỏ hàng | Customer |
+| FR-008 | Đặt hàng (checkout) | Customer |
+| FR-009 | Xem lịch sử đơn hàng | Customer |
+| FR-010 | Thêm sản phẩm mới | Staff, Manager |
+| FR-011 | Sửa thông tin sản phẩm | Staff, Manager |
+| FR-012 | Xóa sản phẩm | Staff, Manager |
+| FR-013 | Xem thống kê doanh thu | Manager |
+| FR-014 | Phân quyền / gán role cho nhân viên | Manager |
+| FR-015 | Xem danh sách tất cả đơn hàng | Manager |
+| FR-016 | Đăng xuất (invalidate token) | Customer, Staff, Manager |
+
+**Non-Functional Requirements:**
+
+| Mã | Yêu cầu | Mô tả |
+|----|---------|-------|
+| NFR-001 | Performance | API response time < 500ms ở P95 với 10,000 concurrent users |
+| NFR-002 | Security | Xác thực JWT, mật khẩu hash BCrypt, HTTPS bắt buộc |
+| NFR-003 | Authorization | RBAC phân quyền rõ ràng 3 tầng: CUSTOMER/STAFF/MANAGER |
+| NFR-004 | Availability | Uptime ≥ 99.5%, DB không được downtime |
+| NFR-005 | Scalability | Kiến trúc stateless, hỗ trợ horizontal scaling |
+| NFR-006 | Data Privacy | Không để lộ thông tin khách hàng (GDPR-like) |
+| NFR-007 | Usability | Admin panel cách ly hoàn toàn với giao diện khách |
+| NFR-008 | Maintainability | Clean code, Layered Architecture, có Swagger docs |
+
+**Các điểm mơ hồ cần làm rõ:**
+- Phương thức thanh toán cụ thể (COD, VNPay, MoMo...)?
+- Quy trình xử lý đơn hàng (pending → confirmed → shipped → delivered)?
+- Có cần chức năng đặt lại mật khẩu (forgot password)?
+- Giới hạn số lượng sản phẩm trong giỏ hàng?
+
+---
+
+### PROMPT #2 – Vẽ Use Case Diagram bằng Mermaid
+
+**Mục đích:** Tạo sơ đồ Use Case tổng quan cho hệ thống.
+
+**Câu Prompt đã dùng:**
+
+```
+Dựa trên danh sách Actors và Functional Requirements đã phân tích ở bước trước, 
+hãy tạo mã Mermaid để vẽ sơ đồ Use Case (Use Case Diagram) tổng quan cho hệ thống 
+TechNova Smart E-Shop.
+
+Yêu cầu:
+- Thể hiện đầy đủ 5 Actor: Guest, Customer, Staff, Manager, System
+- Thể hiện tất cả 16 Use Case từ FR-001 đến FR-016
+- Sử dụng quan hệ <<include>> và <<extend>> khi phù hợp
+- Thể hiện kế thừa: Customer kế thừa Guest (Guest có thể xem SP, Customer cũng vậy)
+- Sử dụng cú pháp Mermaid flowchart hoặc C4 Context nếu Use Case diagram thuần 
+  không được hỗ trợ đầy đủ trong Mermaid
+- Code phải đúng cú pháp, có thể render được
+```
+
+**Kết quả AI trả về:**
+
+```mermaid
+flowchart TD
+    Guest([👤 Guest])
+    Customer([👤 Customer])
+    Staff([👷 Staff])
+    Manager([👔 Manager])
+    System([⚙️ System])
+
+    subgraph Public["🌐 Public Zone"]
+        UC1[Đăng ký tài khoản]
+        UC2[Đăng nhập]
+        UC3[Xem danh sách sản phẩm]
+        UC4[Xem chi tiết sản phẩm]
+        UC5[Tìm kiếm sản phẩm]
+    end
+
+    subgraph CustomerZone["🛒 Customer Zone"]
+        UC6[Thêm vào giỏ hàng]
+        UC7[Quản lý giỏ hàng]
+        UC8[Đặt hàng]
+        UC9[Xem lịch sử đơn hàng]
+        UC16[Đăng xuất]
+    end
+
+    subgraph AdminZone["🔐 Admin Zone"]
+        UC10[Thêm sản phẩm]
+        UC11[Sửa sản phẩm]
+        UC12[Xóa sản phẩm]
+        UC13[Xem thống kê doanh thu]
+        UC14[Phân quyền nhân viên]
+        UC15[Xem tất cả đơn hàng]
+    end
+
+    subgraph SystemAuto["⚙️ System Auto"]
+        UC17[Gửi email xác nhận]
+        UC18[Validate JWT Token]
+    end
+
+    Guest --> UC1
+    Guest --> UC2
+    Guest --> UC3
+    Guest --> UC4
+    Guest --> UC5
+
+    Customer --> UC3
+    Customer --> UC4
+    Customer --> UC5
+    Customer --> UC6
+    Customer --> UC7
+    Customer --> UC8
+    Customer --> UC9
+    Customer --> UC16
+
+    UC8 -.->|include| UC17
+    UC2 -.->|include| UC18
+
+    Staff --> UC10
+    Staff --> UC11
+    Staff --> UC12
+    Staff --> UC16
+
+    Manager --> UC10
+    Manager --> UC11
+    Manager --> UC12
+    Manager --> UC13
+    Manager --> UC14
+    Manager --> UC15
+    Manager --> UC16
+
+    System --> UC17
+    System --> UC18
+```
+
+---
+
+### PROMPT #3 – Thiết kế ERD bằng Mermaid
+
+**Mục đích:** Tạo sơ đồ thực thể quan hệ (ERD) cho cơ sở dữ liệu.
+
+**Câu Prompt đã dùng:**
+
+```
+Bạn vẫn đang đóng vai Senior BA kiêm Database Architect. 
+Hãy thiết kế sơ đồ ERD (Entity Relationship Diagram) cho hệ thống TechNova Smart E-Shop.
+
+Yêu cầu bắt buộc:
+1. Phải có đủ 7 bảng cốt lõi: users, roles, products, orders, order_items, carts, cart_items
+2. Mối quan hệ N-N giữa users và roles phải được xử lý qua bảng trung gian user_roles
+3. Mỗi bảng phải có: khóa chính (PK), các cột dữ liệu phù hợp với nghiệp vụ, 
+   và khóa ngoại (FK) đúng chiều quan hệ
+4. Thể hiện cardinality rõ ràng: 1-1, 1-N, N-N
+5. Dùng cú pháp Mermaid erDiagram
+6. Thêm các cột audit: created_at, updated_at cho các bảng chính
+
+Trả về mã Mermaid hoàn chỉnh, đúng cú pháp.
+```
+
+**Kết quả AI trả về:**
+
+```mermaid
+erDiagram
+    USERS {
+        bigint id PK
+        varchar username UK
+        varchar email UK
+        varchar password
+        varchar full_name
+        varchar phone
+        text address
+        boolean enabled
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ROLES {
+        int id PK
+        varchar name UK
+        varchar description
+    }
+
+    USER_ROLES {
+        bigint user_id FK
+        int role_id FK
+    }
+
+    PRODUCTS {
+        bigint id PK
+        varchar name
+        text description
+        decimal price
+        int stock_quantity
+        varchar category
+        varchar image_url
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CARTS {
+        bigint id PK
+        bigint user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CART_ITEMS {
+        bigint id PK
+        bigint cart_id FK
+        bigint product_id FK
+        int quantity
+        timestamp added_at
+    }
+
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        varchar status
+        decimal total_amount
+        text shipping_address
+        varchar payment_method
+        timestamp ordered_at
+        timestamp updated_at
+    }
+
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint product_id FK
+        int quantity
+        decimal unit_price
+    }
+
+    USERS ||--o{ USER_ROLES : "has"
+    ROLES ||--o{ USER_ROLES : "assigned to"
+    USERS ||--o| CARTS : "owns"
+    CARTS ||--o{ CART_ITEMS : "contains"
+    PRODUCTS ||--o{ CART_ITEMS : "added to"
+    USERS ||--o{ ORDERS : "places"
+    ORDERS ||--o{ ORDER_ITEMS : "contains"
+    PRODUCTS ||--o{ ORDER_ITEMS : "included in"
+```
+
+---
+
+### PROMPT #4 – Tổng hợp tài liệu SRS chuẩn IEEE
+
+**Mục đích:** Tổng hợp toàn bộ phân tích thành tài liệu SRS hoàn chỉnh.
+
+**Câu Prompt đã dùng:**
+
+```
+Dựa trên toàn bộ phân tích đã thực hiện (Actors, FR, NFR, Use Case, ERD), 
+hãy tổng hợp thành một tài liệu Software Requirements Specification (SRS) 
+chuẩn theo mẫu IEEE 830.
+
+Cấu trúc tài liệu phải bao gồm:
+1. Section 1 – Introduction
+   1.1 Purpose
+   1.2 Scope  
+   1.3 Definitions, Acronyms, Abbreviations
+   1.4 References
+   1.5 Overview
+
+2. Section 2 – Overall Description
+   2.1 Product Perspective
+   2.2 Product Functions (tóm tắt)
+   2.3 User Classes and Characteristics
+   2.4 Operating Environment
+   2.5 Design and Implementation Constraints
+   2.6 Assumptions and Dependencies
+
+3. Section 3 – Specific Requirements
+   3.1 External Interface Requirements
+   3.2 Functional Requirements (chi tiết từng FR, Use Case scenario)
+   3.3 Non-Functional Requirements
+
+Viết bằng tiếng Việt, có chuyên môn cao, đúng format markdown với heading rõ ràng.
+```
+
+---
+
+## PHẦN 2 – HỖ TRỢ LẬP TRÌNH (AI-Assisted Coding)
+
+---
+
+### PROMPT #5 – Sinh Entity Classes (Giải quyết N+1 Query)
+
+**Câu Prompt đã dùng:**
+
+```
+Bạn là một Senior Java Developer với chuyên môn sâu về Spring Boot và JPA/Hibernate.
+
+Hãy sinh các JPA Entity classes cho hệ thống TechNova Smart E-Shop dựa trên ERD đã thiết kế.
+Các Entity cần tạo: User, Role, Product, Order, OrderItem, Cart, CartItem.
+
+Yêu cầu kỹ thuật BẮT BUỘC:
+1. Tất cả quan hệ @OneToMany và @ManyToMany PHẢI dùng FetchType.LAZY để tránh N+1 Query
+2. Với User có nhiều Role (N-N): Thiết kế @ManyToMany LAZY, bảng trung gian user_roles
+3. Với Order có nhiều OrderItem (1-N): Thiết kế @OneToMany LAZY
+4. Giải thích rõ tại sao N+1 xảy ra và cách FetchType.LAZY + @EntityGraph giải quyết
+5. Dùng Lombok (@Data, @Builder, @NoArgsConstructor, @AllArgsConstructor)
+6. Dùng @CreationTimestamp và @UpdateTimestamp cho audit fields
+7. Package: com.technova.shop.entity
+
+Trả về code đầy đủ cho từng class, có JavaDoc comment giải thích N+1.
+```
+
+---
+
+### PROMPT #6 – Repository với @EntityGraph
+
+**Câu Prompt đã dùng:**
+
+```
+Tiếp tục với vai trò Senior Java Developer, hãy tạo các JPA Repository interfaces 
+cho các Entity đã định nghĩa.
+
+Yêu cầu quan trọng – giải quyết N+1 Query:
+1. UserRepository: 
+   - Phương thức findByUsername(String username) thông thường sẽ KHÔNG load roles 
+     (vì LAZY). Khi Spring Security gọi loadUserByUsername() và sau đó truy cập 
+     user.getRoles(), JPA sẽ phát sinh thêm N query → đây là N+1.
+   - Giải pháp: Tạo @EntityGraph("User.roles") để EAGER fetch chỉ khi cần thiết.
+   - Viết method: findWithRolesByUsername(String username) dùng @EntityGraph
+
+2. OrderRepository:
+   - findAllByUserId() nếu không dùng EntityGraph sẽ gây N+1 khi load OrderItems
+   - Viết method: findAllWithItemsByUserId() dùng @EntityGraph(attributePaths = {"orderItems", "orderItems.product"})
+
+3. CartRepository:
+   - findByUserId() cần load CartItems và Product cùng lúc
+   - Dùng @EntityGraph cho việc này
+
+Package: com.technova.shop.repository
+```
+
+---
+
+### PROMPT #7 – Cấu hình Spring Security 6 + JWT
+
+**Câu Prompt đã dùng:**
+
+```
+Hãy sinh code cấu hình bảo mật đầy đủ cho Spring Boot 3.x / Spring Security 6.
+
+Yêu cầu:
+1. JwtTokenProvider:
+   - Sử dụng thư viện jjwt (io.jsonwebtoken)
+   - Ký bằng HS256, secret key từ application.properties
+   - Token có thời hạn sống (expiration) cấu hình được
+   - Phương thức: generateToken(), validateToken(), getUsernameFromToken()
+
+2. JwtAuthenticationFilter:
+   - Extends OncePerRequestFilter
+   - Đọc header Authorization: Bearer <token>
+   - Validate token, load UserDetails, set SecurityContext
+
+3. SecurityConfig (Spring Security 6):
+   - Cấu hình SecurityFilterChain (KHÔNG dùng WebSecurityConfigurerAdapter đã deprecated)
+   - Phân quyền endpoint:
+     * /api/v1/public/** → permitAll()
+     * /api/v1/auth/** → permitAll()
+     * /api/v1/admin/products/** → hasAnyRole("STAFF", "MANAGER")
+     * /api/v1/admin/users/** → hasRole("MANAGER")
+     * /api/v1/admin/stats/** → hasRole("MANAGER")
+     * /api/v1/customer/** → hasAnyRole("CUSTOMER", "MANAGER")
+     * Tất cả còn lại → authenticated()
+   - Disable CSRF (stateless API)
+   - SessionManagement: STATELESS
+
+4. CustomAuthEntryPoint: Trả về HTTP 401 với JSON body:
+   {"status": 401, "error": "Unauthorized", "message": "...", "timestamp": "..."}
+
+5. CustomAccessDeniedHandler: Trả về HTTP 403 với JSON body:
+   {"status": 403, "error": "Forbidden", "message": "...", "timestamp": "..."}
+
+Package: com.technova.shop.security và com.technova.shop.config
+```
+
+---
+
+### PROMPT #8 – Controller, Service, DTO với Validation
+
+**Câu Prompt đã dùng:**
+
+```
+Hãy sinh code cho tầng Controller, Service và DTO của các module chính.
+
+Module 1 – Authentication:
+- AuthController: POST /api/v1/auth/register, POST /api/v1/auth/login
+- AuthService: registerUser(), login() → trả về JWT token
+- DTO: RegisterRequest (validation: @NotBlank, @Email, @Size), 
+       LoginRequest, AuthResponse (token, username, roles, expiresIn)
+
+Module 2 – Product (Public + Admin):
+- PublicProductController: GET /api/v1/public/products (có phân trang Page<>), 
+  GET /api/v1/public/products/{id}
+- AdminProductController: POST/PUT/DELETE /api/v1/admin/products/**
+- ProductService: getAllProducts(Pageable), getById(), create(), update(), delete()
+- DTO: ProductRequest (validation: @NotBlank name, @DecimalMin("0.01") price, 
+       @Min(0) stockQuantity), ProductResponse
+
+Module 3 – Cart:
+- CustomerCartController: GET/POST/DELETE /api/v1/customer/cart
+- CartService: getCart(), addItem(), removeItem(), clearCart()
+- DTO: AddToCartRequest, CartResponse, CartItemResponse
+
+Module 4 – Order:
+- CustomerOrderController: POST /api/v1/customer/orders, GET /api/v1/customer/orders
+- AdminOrderController: GET /api/v1/admin/orders
+- OrderService: placeOrder(), getMyOrders(), getAllOrders()
+- DTO: PlaceOrderRequest, OrderResponse, OrderItemResponse
+
+Yêu cầu chung:
+- Dùng @Valid ở Controller, @Validated ở Service khi cần
+- Service KHÔNG chứa logic HTTP (không dùng HttpServletRequest)
+- Trả về ResponseEntity<ApiResponse<T>> với wrapper chuẩn
+- Có GlobalExceptionHandler (@RestControllerAdvice) xử lý: 
+  MethodArgumentNotValidException, ResourceNotFoundException, UnauthorizedException
+```
+
+---
+
+### PROMPT #9 – Điều chỉnh khi AI làm thiếu (Iterative Prompting)
+
+**Tình huống:** AI quên không thêm endpoint thống kê doanh thu.
+
+**Câu Prompt điều chỉnh:**
+
+```
+Trong phần Admin, bạn đã bỏ sót module Thống kê Doanh thu (FR-013).
+Hãy bổ sung:
+
+1. AdminStatsController: GET /api/v1/admin/stats/revenue
+   - Query param: startDate, endDate (ISO format)
+   - Yêu cầu role MANAGER
+
+2. StatsService:
+   - getRevenueStats(LocalDate start, LocalDate end): 
+     + Tổng doanh thu trong khoảng thời gian
+     + Số đơn hàng theo trạng thái
+     + Top 5 sản phẩm bán chạy nhất (dùng @Query JPQL aggregation)
+
+3. DTO: RevenueStatsResponse, TopProductResponse
+
+Dùng @Query trong OrderRepository và OrderItemRepository với JPQL GROUP BY.
+```
+
+---
+
+### PROMPT #10 – Cấu hình application.properties và pom.xml
+
+**Câu Prompt đã dùng:**
+
+```
+Hãy tạo file cấu hình đầy đủ cho dự án Spring Boot:
+
+1. pom.xml với các dependency:
+   - spring-boot-starter-web
+   - spring-boot-starter-data-jpa
+   - spring-boot-starter-security
+   - spring-boot-starter-validation
+   - mysql-connector-j
+   - jjwt-api, jjwt-impl, jjwt-jackson (version 0.12.x)
+   - lombok
+   - springdoc-openapi-starter-webmvc-ui (Swagger)
+   - modelmapper hoặc mapstruct
+
+2. application.properties:
+   - MySQL connection (localhost:3306/technova_db)
+   - JPA/Hibernate: ddl-auto=update, show-sql=true, dialect=MySQL8Dialect
+   - JWT: secret key (base64 encoded, ≥256 bit), expiration=86400000 (24h)
+   - Server port: 8080
+   - Swagger: enable
+
+Giải thích ý nghĩa của từng cấu hình quan trọng bằng comment.
+```
+
+---
+
+## PHẦN 3 – NHẬN XÉT VỀ KỸ NĂNG PROMPT ENGINEERING
+
+### Kỹ thuật đã áp dụng:
+
+| Kỹ thuật | Prompt # | Mô tả |
+|----------|----------|-------|
+| **Role Prompting** | #1, #5, #6 | Gán vai "Senior BA", "Senior Java Developer" để AI trả lời chuyên môn hơn |
+| **Context Chaining** | #2, #3, #4 | Mỗi prompt kế tiếp kế thừa context từ prompt trước ("Dựa trên phân tích đã có...") |
+| **Constraint Specification** | #5, #7 | Liệt kê rõ "yêu cầu BẮT BUỘC" để tránh AI bỏ sót điểm quan trọng |
+| **Output Format Control** | #1, #3 | Chỉ định format đầu ra (markdown table, mermaid code) |
+| **Iterative Refinement** | #9 | Khi AI làm thiếu, dùng follow-up prompt cụ thể để bổ sung |
+| **Few-shot trong format** | #8 | Cung cấp ví dụ format JSON response mong muốn |
+| **Ambiguity Flagging** | #1 | Yêu cầu AI chủ động chỉ ra các điểm chưa rõ ràng |
