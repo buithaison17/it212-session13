@@ -1,0 +1,36 @@
+package com.technova.shop.config;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Cấu hình Swagger/OpenAPI 3.0 cho việc chạy thử và lập tài liệu API.
+ * Hỗ trợ xác thực Bearer Token (JWT) ngay trong giao diện Swagger UI.
+ */
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        final String securitySchemeName = "BearerAuth";
+        return new OpenAPI()
+                .info(new Info()
+                        .title("TechNova Smart E-Shop Backend API")
+                        .version("1.0.0")
+                        .description("Tài liệu đặc tả các RESTful APIs của hệ thống bán hàng Smart E-Shop - TechNova."))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                        .description("Nhập token dạng: Bearer {JWT_TOKEN}")));
+    }
+}
